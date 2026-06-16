@@ -1,17 +1,16 @@
 import styles from './SuccessScreen.module.css';
 
-export default function SuccessScreen({ captador, isDownload, onReset }) {
+export default function SuccessScreen({ captador, isDownload, onReset, customTitle, customDesc }) {
+  const title = customTitle || (isDownload ? '¡Documento generado!' : '¡Enviado!');
+  const desc = customDesc || (isDownload
+    ? 'El PDF se ha descargado en tu dispositivo.'
+    : 'El documento ha sido enviado al captador por Slack.');
+
   return (
     <div className={styles.wrap}>
-      <div className={styles.icon}>✅</div>
-      <h2 className={styles.title}>
-        {isDownload ? '¡Propuesta generada!' : '¡Propuesta enviada!'}
-      </h2>
-      <p className={styles.desc}>
-        {isDownload
-          ? 'La propuesta de compra se ha descargado como PDF en tu dispositivo.'
-          : 'La propuesta de compra firmada ha sido enviada al captador por Slack.'}
-      </p>
+      <div className={styles.icon}>{isDownload ? '📄' : '✅'}</div>
+      <h2 className={styles.title}>{title}</h2>
+      <p className={styles.desc}>{desc}</p>
 
       {!isDownload && captador && (
         <div className={styles.badge}>
@@ -21,7 +20,7 @@ export default function SuccessScreen({ captador, isDownload, onReset }) {
       )}
 
       <button className={styles.btnNew} onClick={onReset} type="button">
-        Nueva propuesta
+        {isDownload ? 'Nueva propuesta' : 'Nuevo perfil'}
       </button>
     </div>
   );

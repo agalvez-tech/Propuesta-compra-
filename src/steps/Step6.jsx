@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
-import SectionCard from '../components/SectionCard';
-import Field from '../components/Field';
 import { PREGUNTAS } from '../data';
 import { fmtEuros } from '../utils/pdf';
 import styles from './StepShared.module.css';
 import s6 from './Step6.module.css';
+import SectionCard from '../components/SectionCard';
 
-export default function Step6({ form, captador, answers, onFormChange, slackToken, onTokenChange, agenteRemitente, onRemitenteChange }) {
+export default function Step6({ form, captador, answers }) {
   const rows = [
     ['Inmueble', form.viviendaDir],
     ['Ref. comercial', form.viviendaRef],
@@ -22,9 +20,9 @@ export default function Step6({ form, captador, answers, onFormChange, slackToke
 
   return (
     <div>
-      <p className="step-title">Revisar y enviar</p>
+      <p className="step-title">Generar documento</p>
       <p className="step-desc">
-        El documento se enviará al captador por Slack. Revisa los datos antes de enviar.
+        Revisa el resumen y pulsa <strong>Generar PDF</strong> para descargar la propuesta con todas las cláusulas legales.
       </p>
 
       <SectionCard icon="📋" title="Resumen de la propuesta">
@@ -45,32 +43,6 @@ export default function Step6({ form, captador, answers, onFormChange, slackToke
             </div>
           );
         })}
-      </SectionCard>
-
-      <SectionCard icon="🔑" title="Configuración Slack">
-        <div className={s6.configBanner}>
-          ⚙️ El token se guarda en este dispositivo. Solo es necesario introducirlo una vez.
-          Si no tienes token, la propuesta se descargará como PDF.
-        </div>
-        <div className={styles.grid2}>
-          <Field label="Token Slack Bot">
-            <input
-              type="password"
-              value={slackToken}
-              onChange={e => onTokenChange(e.target.value)}
-              placeholder="xoxb-..."
-              autoComplete="off"
-            />
-          </Field>
-          <Field label="Tu nombre (quién envía)">
-            <input
-              type="text"
-              value={agenteRemitente}
-              onChange={e => onRemitenteChange(e.target.value)}
-              placeholder="Ej: Almudena Gálvez"
-            />
-          </Field>
-        </div>
       </SectionCard>
     </div>
   );

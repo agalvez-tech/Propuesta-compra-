@@ -3,14 +3,16 @@ import AppHeader from './components/AppHeader';
 import Stepper from './components/Stepper';
 import BottomBar from './components/BottomBar';
 import SuccessScreen from './components/SuccessScreen';
+import SettingsModal from './components/SettingsModal';
 import Step1 from './steps/Step1';
 import Step2 from './steps/Step2';
 import Step3 from './steps/Step3';
 import Step4 from './steps/Step4';
 import Step5 from './steps/Step5';
 import Step6 from './steps/Step6';
+import PerfilComprador from './tabs/PerfilComprador';
 import { PREGUNTAS } from './data';
-import { generatePDF, sendToSlack, downloadPDF } from './utils/pdf';
+import { generatePDF, downloadPDF } from './utils/pdf';
 import styles from './App.module.css';
 
 const INITIAL_FORM = {
@@ -32,31 +34,44 @@ const INITIAL_FORM = {
 };
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('propuesta');
+
+  // Propuesta state
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [captador, setCaptador] = useState(null);
   const [answers, setAnswers] = useState(Array(PREGUNTAS.length).fill(null));
   const [firmaData, setFirmaData] = useState(null);
-  const [slackToken, setSlackToken] = useState(() => localStorage.getItem('rk_slack_token') || '');
-  const [agenteRemitente, setAgenteRemitente] = useState(() => localStorage.getItem('rk_agente_remitente') || '');
   const [errors, setErrors] = useState({});
   const [qError, setQError] = useState(false);
   const [firmaError, setFirmaError] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [done, setDone] = useState(false);
-  const [wasDownload, setWasDownload] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [propuestaDone, setPropuestaDone] = useState(false);
 
+  // Perfil state
+  const [perfilDone, setPerfilDone] = useState(false);
+  const [perfilCaptador, setPerfilCaptador] = useState(null);
+
+  // Shared
+  const [slackToken, setSlackToken] = useState(() => localStorage.getItem('rk_slack_token') || '');
+  const [agenteRemitente, setAgenteRemitente] = useState(() => localStorage.getItem('rk_agente_remitente') || '');
+  const [showSettings, setShowSettings] = useState(false);
+
+  // ── Tab switch resets done states but keeps settings ──
+  function handleTabChange(tab) {
+    setActiveTab(tab);
+    setPropuestaDone(false);
+    setPerfilDone(false);
+  }
+
+  // ── PROPUESTA LOGIC ──
   function handleFormChange(key, value) {
     setForm(prev => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: false }));
   }
 
   function handleAnswer(i, ans) {
-    setAnswers(prev => {
-      const next = [...prev];
-      next[i] = ans;
-      return next;
-    });
+    setAnswers(prev => { const n = [...prev]; n[i] = ans; return n; });
     setQError(false);
   }
 
@@ -86,9 +101,9 @@ export default function App() {
       return Object.keys(errs).length === 0;
     }
     if (step === 4) {
-      const allAnswered = answers.every(a => a !== null);
-      setQError(!allAnswered);
-      return allAnswered;
+      const ok = answers.every(a => a !== null);
+      setQError(!ok);
+      return ok;
     }
     if (step === 5) {
       setFirmaError(!firmaData);
@@ -104,52 +119,32 @@ export default function App() {
   }
 
   function prevStep() {
-    setStep(s => s - 1);
-    window.scrollTo(0, 0);
+    if (activeTab === 'propuesta' && step > 1) {
+      setStep(s => s - 1);
+      window.scrollTo(0, 0);
+    }
   }
 
-  async function handleSend() {
-    setSending(true);
-
-    if (slackToken) localStorage.setItem('rk_slack_token', slackToken);
-    if (agenteRemitente) localStorage.setItem('rk_agente_remitente', agenteRemitente);
-
+  async function handleGenerate() {
+    setGenerating(true);
     const today = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
     const filename = `propuesta-${form.viviendaRef || 'compra'}-${today}.pdf`;
-
-    let pdfB64 = null;
     try {
-      pdfB64 = generatePDF(
+      const pdfB64 = generatePDF(
         { ...form, agenteRemitente },
         { questions: PREGUNTAS, answers },
         firmaData
       );
+      downloadPDF(pdfB64, filename);
+      setPropuestaDone(true);
     } catch (e) {
-      console.error('PDF error:', e);
+      console.error(e);
+      alert('Error al generar el PDF: ' + e.message);
     }
-
-    if (slackToken && captador) {
-      try {
-        await sendToSlack(slackToken, captador.channel, { ...form, agenteRemitente }, pdfB64);
-        setWasDownload(false);
-        setDone(true);
-      } catch (err) {
-        console.error('Slack error:', err);
-        if (pdfB64) downloadPDF(pdfB64, filename);
-        alert('⚠️ No se pudo enviar por Slack. El PDF se ha descargado.\n\nError: ' + err.message);
-        setWasDownload(true);
-        setDone(true);
-      }
-    } else {
-      if (pdfB64) downloadPDF(pdfB64, filename);
-      setWasDownload(true);
-      setDone(true);
-    }
-
-    setSending(false);
+    setGenerating(false);
   }
 
-  function resetApp() {
+  function resetPropuesta() {
     setStep(1);
     setForm(INITIAL_FORM);
     setCaptador(null);
@@ -158,73 +153,97 @@ export default function App() {
     setErrors({});
     setQError(false);
     setFirmaError(false);
-    setDone(false);
-    setWasDownload(false);
+    setPropuestaDone(false);
     window.scrollTo(0, 0);
   }
 
-  if (done) {
-    return (
-      <>
-        <AppHeader captadorName={captador?.name} />
-        <SuccessScreen captador={captador} isDownload={wasDownload} onReset={resetApp} />
-      </>
-    );
+  function resetPerfil() {
+    setPerfilDone(false);
+    setPerfilCaptador(null);
   }
+
+  // ── RENDER ──
+  const showBottomBar = activeTab === 'propuesta' && !propuestaDone;
 
   return (
     <>
-      <AppHeader captadorName={captador?.name} />
-      <Stepper current={step} />
-
-      <main className={styles.main}>
-        {step === 1 && (
-          <Step1
-            form={form}
-            onChange={handleFormChange}
-            captador={captador}
-            onCaptador={setCaptador}
-            errors={errors}
-          />
-        )}
-        {step === 2 && (
-          <Step2 form={form} onChange={handleFormChange} errors={errors} />
-        )}
-        {step === 3 && (
-          <Step3 form={form} onChange={handleFormChange} errors={errors} />
-        )}
-        {step === 4 && (
-          <Step4 answers={answers} onAnswer={handleAnswer} error={qError} />
-        )}
-        {step === 5 && (
-          <Step5
-            form={form}
-            captador={captador}
-            firmaData={firmaData}
-            onFirma={setFirmaData}
-            error={firmaError}
-          />
-        )}
-        {step === 6 && (
-          <Step6
-            form={form}
-            captador={captador}
-            answers={answers}
-            slackToken={slackToken}
-            onTokenChange={setSlackToken}
-            agenteRemitente={agenteRemitente}
-            onRemitenteChange={setAgenteRemitente}
-          />
-        )}
-      </main>
-
-      <BottomBar
-        step={step}
-        onBack={prevStep}
-        onNext={nextStep}
-        onSend={handleSend}
-        sending={sending}
+      <AppHeader
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onSettings={() => setShowSettings(true)}
       />
+
+      {showSettings && (
+        <SettingsModal
+          slackToken={slackToken}
+          onTokenChange={setSlackToken}
+          agenteRemitente={agenteRemitente}
+          onRemitenteChange={setAgenteRemitente}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+
+      {/* ── TAB: PROPUESTA ── */}
+      {activeTab === 'propuesta' && (
+        <>
+          {propuestaDone ? (
+            <SuccessScreen
+              captador={null}
+              isDownload={true}
+              onReset={resetPropuesta}
+              customTitle="¡Documento generado!"
+              customDesc="La propuesta de compra se ha descargado como PDF con todas las cláusulas legales."
+            />
+          ) : (
+            <>
+              <Stepper current={step} />
+              <main className={styles.main}>
+                {step === 1 && <Step1 form={form} onChange={handleFormChange} captador={captador} onCaptador={setCaptador} errors={errors} />}
+                {step === 2 && <Step2 form={form} onChange={handleFormChange} errors={errors} />}
+                {step === 3 && <Step3 form={form} onChange={handleFormChange} errors={errors} />}
+                {step === 4 && <Step4 answers={answers} onAnswer={handleAnswer} error={qError} />}
+                {step === 5 && <Step5 form={form} captador={captador} firmaData={firmaData} onFirma={setFirmaData} error={firmaError} />}
+                {step === 6 && <Step6 form={form} captador={captador} answers={answers} />}
+              </main>
+              <BottomBar
+                tab="propuesta"
+                step={step}
+                onBack={prevStep}
+                onNext={nextStep}
+                onGenerate={handleGenerate}
+                generating={generating}
+              />
+            </>
+          )}
+        </>
+      )}
+
+      {/* ── TAB: PERFIL COMPRADOR ── */}
+      {activeTab === 'perfil' && (
+        <>
+          {perfilDone ? (
+            <SuccessScreen
+              captador={perfilCaptador}
+              isDownload={false}
+              onReset={resetPerfil}
+              customTitle="¡Perfil enviado!"
+              customDesc="El perfil del comprador ha sido enviado al captador por Slack."
+            />
+          ) : (
+            <main className={styles.main}>
+              <p className="step-title">Perfil del Comprador</p>
+              <p className="step-desc">
+                Rellena el perfil y el checklist. Al pulsar enviar, el captador recibirá toda la información por Slack.
+              </p>
+              <PerfilComprador
+                slackToken={slackToken}
+                agenteRemitente={agenteRemitente}
+                onSuccess={(cap) => { setPerfilCaptador(cap); setPerfilDone(true); }}
+              />
+            </main>
+          )}
+        </>
+      )}
     </>
   );
 }

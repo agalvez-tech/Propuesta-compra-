@@ -1,26 +1,29 @@
 .header {
   background: var(--black);
-  padding: 0 24px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.top {
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .logoMark {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background: var(--orange);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   color: white;
   letter-spacing: -0.5px;
   flex-shrink: 0;
@@ -31,10 +34,58 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
+  flex: 1;
 }
 
-.sub {
-  color: var(--gray-400);
+.settingsBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.settingsBtn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.tabs {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.tab {
+  flex: 1;
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  font-family: var(--font);
   font-size: 12px;
-  margin-left: auto;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-bottom: 3px solid transparent;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab:hover {
+  color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.05);
+}
+
+.tab.active {
+  color: white;
+  border-bottom-color: var(--orange);
+  background: rgba(207,115,27,0.1);
+}
+
+@media (max-width: 480px) {
+  .tab { font-size: 11px; padding: 10px 10px; }
 }

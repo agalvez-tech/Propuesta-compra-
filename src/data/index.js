@@ -1,24 +1,27 @@
+// Captadores ordenados alfabéticamente por nombre
 export const CAPTADORES = [
-  { name: 'Jose Giménez',       channel: 'C0ABSMNFDCY',  initials: 'JG' },
-  { name: 'Desiree López',      channel: 'C0ABB99MV5F',  initials: 'DL' },
-  { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
-  { name: 'Clara Ordoñez',      channel: 'C0AAGR9Q2S3',  initials: 'CO' },
+  { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
+  { name: 'Almudena Gálvez',    channel: 'DIRECT',        initials: 'AL' },
   { name: 'Amparo Orts',        channel: 'C0AAGQKHU4X',  initials: 'AO' },
-  { name: 'Fran Estelles',      channel: 'C0AAUMPTSGM',  initials: 'FE' },
+  { name: 'Asunción Marco',     channel: 'C0AAZVD8UUA',  initials: 'AS' },
+  { name: 'Clara Ordoñez',      channel: 'C0AAGR9Q2S3',  initials: 'CO' },
   { name: 'Claudia Stelling',   channel: 'C0AAYB1QT8A',  initials: 'CS' },
+  { name: 'Desiree López',      channel: 'C0ABB99MV5F',  initials: 'DL' },
+  { name: 'Eva Vallés',         channel: 'C0AAJS3F0A3',  initials: 'EV' },
   { name: 'Fede Carbonell',     channel: 'C0ABB13HW1F',  initials: 'FC' },
+  { name: 'Fran Estelles',      channel: 'C0AAUMPTSGM',  initials: 'FE' },
+  { name: 'Jose Giménez',       channel: 'C0ABSMNFDCY',  initials: 'JG' },
+  { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
+  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
+  { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
   { name: 'Mavi Castillo',      channel: 'C0ABT3HLT1N',  initials: 'MC' },
   { name: 'Mª Luisa Bellver',   channel: 'C0AAXU0MC4W',  initials: 'ML' },
-  { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
-  { name: 'Sefa Gallent',       channel: 'C0AB1TRTQ04',  initials: 'SG' },
-  { name: 'Eva Vallés',         channel: 'C0AAJS3F0A3',  initials: 'EV' },
-  { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
   { name: 'Natalia Sanfélix',   channel: 'C0AAWH6HJ3X',  initials: 'NS' },
-  { name: 'Virginia Corral',    channel: 'C0AB3HP8VBN',  initials: 'VC' },
+  { name: 'Nuria',              channel: 'PENDING',       initials: 'NU' },
   { name: 'Rosa Doménech',      channel: 'C0AAW8EEW94',  initials: 'RD' },
-  { name: 'Asunción Marco',     channel: 'C0AAZVD8UUA',  initials: 'AS' },
+  { name: 'Sefa Gallent',       channel: 'C0AB1TRTQ04',  initials: 'SG' },
+  { name: 'Virginia Corral',    channel: 'C0AB3HP8VBN',  initials: 'VC' },
   { name: 'Yvonne Vidal',       channel: 'C0B6D3ZR1FA',  initials: 'YV' },
-  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
 ];
 
 export const PREGUNTAS = [
@@ -36,11 +39,11 @@ export const PREGUNTAS = [
   '¿Se le ha informado de que si se traslada una oferta por parte del comprador, se acepta, y luego no se firman las arras, perderá la señal entregada como reserva?',
 ];
 
-export const STEPS = [
+export const STEPS_PROPUESTA = [
   { label: 'Inmueble' },
   { label: 'Comprador' },
   { label: 'Oferta' },
   { label: 'Cuestionario' },
   { label: 'Firma' },
-  { label: 'Enviar' },
+  { label: 'Documento' },
 ];
