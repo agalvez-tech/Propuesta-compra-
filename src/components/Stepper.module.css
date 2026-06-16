@@ -1,0 +1,83 @@
+.wrap {
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  padding: 16px 24px;
+}
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+}
+
+.item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--gray-200);
+  z-index: 0;
+  transition: background 0.3s;
+}
+
+.item.done:not(:last-child)::after {
+  background: var(--orange);
+}
+
+.dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-200);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  z-index: 1;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.item.active .dot {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: white;
+}
+
+.item.done .dot {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: white;
+  font-size: 12px;
+}
+
+.label {
+  font-size: 10px;
+  color: var(--gray-400);
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.item.active .label { color: var(--orange); }
+.item.done .label { color: var(--gray-600); }
+
+@media (max-width: 480px) {
+  .label { display: none; }
+}

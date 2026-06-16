@@ -1,0 +1,24 @@
+.configBanner {
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #78350f;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.qRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 4px 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.qText {
+  color: var(--gray-600);
+  flex: 1;
+}

@@ -1,0 +1,46 @@
+export const CAPTADORES = [
+  { name: 'Jose Giménez',       channel: 'C0ABSMNFDCY',  initials: 'JG' },
+  { name: 'Desiree López',      channel: 'C0ABB99MV5F',  initials: 'DL' },
+  { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
+  { name: 'Clara Ordoñez',      channel: 'C0AAGR9Q2S3',  initials: 'CO' },
+  { name: 'Amparo Orts',        channel: 'C0AAGQKHU4X',  initials: 'AO' },
+  { name: 'Fran Estelles',      channel: 'C0AAUMPTSGM',  initials: 'FE' },
+  { name: 'Claudia Stelling',   channel: 'C0AAYB1QT8A',  initials: 'CS' },
+  { name: 'Fede Carbonell',     channel: 'C0ABB13HW1F',  initials: 'FC' },
+  { name: 'Mavi Castillo',      channel: 'C0ABT3HLT1N',  initials: 'MC' },
+  { name: 'Mª Luisa Bellver',   channel: 'C0AAXU0MC4W',  initials: 'ML' },
+  { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
+  { name: 'Sefa Gallent',       channel: 'C0AB1TRTQ04',  initials: 'SG' },
+  { name: 'Eva Vallés',         channel: 'C0AAJS3F0A3',  initials: 'EV' },
+  { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
+  { name: 'Natalia Sanfélix',   channel: 'C0AAWH6HJ3X',  initials: 'NS' },
+  { name: 'Virginia Corral',    channel: 'C0AB3HP8VBN',  initials: 'VC' },
+  { name: 'Rosa Doménech',      channel: 'C0AAW8EEW94',  initials: 'RD' },
+  { name: 'Asunción Marco',     channel: 'C0AAZVD8UUA',  initials: 'AS' },
+  { name: 'Yvonne Vidal',       channel: 'C0B6D3ZR1FA',  initials: 'YV' },
+  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
+];
+
+export const PREGUNTAS = [
+  '¿Se te ha informado de que esta oferta está sujeta a la aprobación por parte del propietario?',
+  '¿Se te ha informado de que esto puede ser así aunque la oferta sea en precio?',
+  '¿Se te ha informado de que si se traslada una oferta por debajo del precio publicado, ésta debe ser aceptada por parte del propietario?',
+  '¿Se te ha informado de que la agencia inmobiliaria solo tiene autorización para reservar la vivienda cuando tenga una propuesta aceptada por el propietario?',
+  '¿Se te ha informado de que la agencia inmobiliaria no puede dar de baja el inmueble de los portales sin una aceptación por parte del propietario, y por tanto, mientras eso suceda, pueden haber más visitas / ofertas?',
+  '¿Necesita financiación?',
+  '¿La tiene aprobada en alguna entidad bancaria?',
+  '¿Necesita una tasación y la tiene ya en estudio?',
+  '¿Sabe que tendrá que firmar las arras en el tiempo estipulado en la propuesta de compra que se está firmando?',
+  '¿Se te ha informado con carácter previo a realizar la oferta que para la tramitación y gestión de ésta deberá abonar, en caso de realizarse la compraventa, honorarios a RK PALANCA FONTESTAD?',
+  '¿Se le ha informado de que si quiere pactar otras condiciones adicionales debe plantearlo al firmar el documento de oferta, no una vez éste haya sido aceptado?',
+  '¿Se le ha informado de que si se traslada una oferta por parte del comprador, se acepta, y luego no se firman las arras, perderá la señal entregada como reserva?',
+];
+
+export const STEPS = [
+  { label: 'Inmueble' },
+  { label: 'Comprador' },
+  { label: 'Oferta' },
+  { label: 'Cuestionario' },
+  { label: 'Firma' },
+  { label: 'Enviar' },
+];

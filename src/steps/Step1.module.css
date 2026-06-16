@@ -1,0 +1,85 @@
+.grid {
+  display: grid;
+  gap: 14px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.captadorHint {
+  font-size: 12px;
+  color: var(--gray-600);
+  margin-bottom: 14px;
+}
+
+.captadorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.captadorCard {
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 12px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  background: white;
+  font-family: var(--font);
+}
+
+.captadorCard:hover {
+  border-color: var(--orange);
+  background: var(--orange-light);
+}
+
+.captadorCard.selected {
+  border-color: var(--orange);
+  background: var(--orange-light);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  transition: background 0.15s;
+}
+
+.captadorCard.selected .avatar {
+  background: var(--orange-dark);
+}
+
+.captadorName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--black);
+  display: block;
+  line-height: 1.3;
+}
+
+.error {
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.inputError {
+  border-color: #dc2626 !important;
+}
+
+@media (max-width: 520px) {
+  .grid2 { grid-template-columns: 1fr; }
+}
