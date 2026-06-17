@@ -1,8 +1,7 @@
 import {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   ImageRun, Header, Footer, AlignmentType, BorderStyle, WidthType,
-  ShadingType, VerticalAlign, PageNumber, PageBreak, LevelFormat,
-  HeadingLevel, UnderlineType, convertInchesToTwip
+  ShadingType, PageBreak, UnderlineType,
 } from 'docx';
 
 export function fmtEuros(n) {
@@ -456,14 +455,12 @@ export async function generateDocx(formData, questionData) {
     }],
   });
 
-  const buffer = await Packer.toBuffer(docObj);
-  return buffer;
+  // Packer.toBlob() is browser-safe (no Node Buffer needed)
+  const blob = await Packer.toBlob(docObj);
+  return blob;
 }
 
-export function downloadDocx(buffer, filename) {
-  const blob = new Blob([buffer], {
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  });
+export function downloadDocx(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

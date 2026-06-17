@@ -121,11 +121,11 @@ export default function App() {
     const today = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
     const filename = `propuesta-${form.viviendaRef || 'compra'}-${today}.docx`;
     try {
-      const buffer = await generateDocx(
+      const blob = await generateDocx(
         { ...form, agenteRemitente },
         { questions: PREGUNTAS, answers }
       );
-      downloadDocx(buffer, filename);
+      downloadDocx(blob, filename);
       setPropuestaDone(true);
     } catch (e) {
       console.error(e);
