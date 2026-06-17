@@ -46,7 +46,7 @@ export default function Step5Final({ form, captador, answers }) {
       </SectionCard>
 
       <div className={s6.pdfNote}>
-        📄 El PDF incluirá el texto legal completo del documento original, las tablas de aceptación del vendedor, el cuestionario y el reconocimiento de honorarios.
+        📄 El documento Word incluirá el texto legal completo del documento original, las tablas de aceptación del vendedor, el cuestionario y el reconocimiento de honorarios.
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ export default function BottomBar({ step, totalSteps = 5, onBack, onNext, onGene
           disabled={generating}
           type="button"
         >
-          {generating ? '⏳ Generando…' : '📄 Generar PDF'}
+          {generating ? '⏳ Generando…' : '📄 Generar Word'}
         </button>
       )}
 

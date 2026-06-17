@@ -11,7 +11,7 @@ import Step4 from './steps/Step4';
 import Step5Final from './steps/Step6';   // paso 5 del flujo = Step6.jsx (Generar)
 import PerfilComprador from './tabs/PerfilComprador';
 import { PREGUNTAS } from './data';
-import { generatePDF, downloadPDF } from './utils/pdf';
+import { generateDocx, downloadDocx } from './utils/docx';
 import styles from './App.module.css';
 
 const INITIAL_FORM = {
@@ -119,18 +119,17 @@ export default function App() {
   async function handleGenerate() {
     setGenerating(true);
     const today = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
-    const filename = `propuesta-${form.viviendaRef || 'compra'}-${today}.pdf`;
+    const filename = `propuesta-${form.viviendaRef || 'compra'}-${today}.docx`;
     try {
-      const pdfB64 = generatePDF(
+      const buffer = await generateDocx(
         { ...form, agenteRemitente },
-        { questions: PREGUNTAS, answers },
-        null // sin firma
+        { questions: PREGUNTAS, answers }
       );
-      downloadPDF(pdfB64, filename);
+      downloadDocx(buffer, filename);
       setPropuestaDone(true);
     } catch (e) {
       console.error(e);
-      alert('Error al generar el PDF: ' + e.message);
+      alert('Error al generar el documento: ' + e.message);
     }
     setGenerating(false);
   }
@@ -176,7 +175,7 @@ export default function App() {
             isDownload={true}
             onReset={resetPropuesta}
             customTitle="¡Documento generado!"
-            customDesc="La propuesta de compra se ha descargado como PDF con todas las cláusulas legales."
+            customDesc="La propuesta de compra se ha descargado como Word (.docx) con todas las cláusulas legales. Puedes abrirlo y editarlo desde Word.."
           />
         ) : (
           <>
