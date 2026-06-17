@@ -8,8 +8,7 @@ import Step1 from './steps/Step1';
 import Step2 from './steps/Step2';
 import Step3 from './steps/Step3';
 import Step4 from './steps/Step4';
-import Step5 from './steps/Step5';
-import Step6 from './steps/Step6';
+import Step5Final from './steps/Step6';   // paso 5 del flujo = Step6.jsx (Generar)
 import PerfilComprador from './tabs/PerfilComprador';
 import { PREGUNTAS } from './data';
 import { generatePDF, downloadPDF } from './utils/pdf';
@@ -33,6 +32,8 @@ const INITIAL_FORM = {
   observaciones: '',
 };
 
+const TOTAL_STEPS = 5; // Inmueble · Comprador · Oferta · Cuestionario · Generar
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('propuesta');
 
@@ -41,10 +42,8 @@ export default function App() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [captador, setCaptador] = useState(null);
   const [answers, setAnswers] = useState(Array(PREGUNTAS.length).fill(null));
-  const [firmaData, setFirmaData] = useState(null);
   const [errors, setErrors] = useState({});
   const [qError, setQError] = useState(false);
-  const [firmaError, setFirmaError] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [propuestaDone, setPropuestaDone] = useState(false);
 
@@ -57,14 +56,13 @@ export default function App() {
   const [agenteRemitente, setAgenteRemitente] = useState(() => localStorage.getItem('rk_agente_remitente') || '');
   const [showSettings, setShowSettings] = useState(false);
 
-  // ── Tab switch resets done states but keeps settings ──
   function handleTabChange(tab) {
     setActiveTab(tab);
     setPropuestaDone(false);
     setPerfilDone(false);
   }
 
-  // ── PROPUESTA LOGIC ──
+  // ── PROPUESTA ──────────────────────────────────────────
   function handleFormChange(key, value) {
     setForm(prev => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: false }));
@@ -105,10 +103,6 @@ export default function App() {
       setQError(!ok);
       return ok;
     }
-    if (step === 5) {
-      setFirmaError(!firmaData);
-      return !!firmaData;
-    }
     return true;
   }
 
@@ -119,10 +113,7 @@ export default function App() {
   }
 
   function prevStep() {
-    if (activeTab === 'propuesta' && step > 1) {
-      setStep(s => s - 1);
-      window.scrollTo(0, 0);
-    }
+    if (step > 1) { setStep(s => s - 1); window.scrollTo(0, 0); }
   }
 
   async function handleGenerate() {
@@ -133,7 +124,7 @@ export default function App() {
       const pdfB64 = generatePDF(
         { ...form, agenteRemitente },
         { questions: PREGUNTAS, answers },
-        firmaData
+        null // sin firma
       );
       downloadPDF(pdfB64, filename);
       setPropuestaDone(true);
@@ -149,10 +140,8 @@ export default function App() {
     setForm(INITIAL_FORM);
     setCaptador(null);
     setAnswers(Array(PREGUNTAS.length).fill(null));
-    setFirmaData(null);
     setErrors({});
     setQError(false);
-    setFirmaError(false);
     setPropuestaDone(false);
     window.scrollTo(0, 0);
   }
@@ -161,9 +150,6 @@ export default function App() {
     setPerfilDone(false);
     setPerfilCaptador(null);
   }
-
-  // ── RENDER ──
-  const showBottomBar = activeTab === 'propuesta' && !propuestaDone;
 
   return (
     <>
@@ -183,66 +169,61 @@ export default function App() {
         />
       )}
 
-      {/* ── TAB: PROPUESTA ── */}
+      {/* ── TAB PROPUESTA ── */}
       {activeTab === 'propuesta' && (
-        <>
-          {propuestaDone ? (
-            <SuccessScreen
-              captador={null}
-              isDownload={true}
-              onReset={resetPropuesta}
-              customTitle="¡Documento generado!"
-              customDesc="La propuesta de compra se ha descargado como PDF con todas las cláusulas legales."
+        propuestaDone ? (
+          <SuccessScreen
+            isDownload={true}
+            onReset={resetPropuesta}
+            customTitle="¡Documento generado!"
+            customDesc="La propuesta de compra se ha descargado como PDF con todas las cláusulas legales."
+          />
+        ) : (
+          <>
+            <Stepper current={step} />
+            <main className={styles.main}>
+              {step === 1 && <Step1 form={form} onChange={handleFormChange} captador={captador} onCaptador={setCaptador} errors={errors} />}
+              {step === 2 && <Step2 form={form} onChange={handleFormChange} errors={errors} />}
+              {step === 3 && <Step3 form={form} onChange={handleFormChange} errors={errors} />}
+              {step === 4 && <Step4 answers={answers} onAnswer={handleAnswer} error={qError} />}
+              {step === 5 && <Step5Final form={form} captador={captador} answers={answers} />}
+            </main>
+            <BottomBar
+              tab="propuesta"
+              step={step}
+              totalSteps={TOTAL_STEPS}
+              onBack={prevStep}
+              onNext={nextStep}
+              onGenerate={handleGenerate}
+              generating={generating}
             />
-          ) : (
-            <>
-              <Stepper current={step} />
-              <main className={styles.main}>
-                {step === 1 && <Step1 form={form} onChange={handleFormChange} captador={captador} onCaptador={setCaptador} errors={errors} />}
-                {step === 2 && <Step2 form={form} onChange={handleFormChange} errors={errors} />}
-                {step === 3 && <Step3 form={form} onChange={handleFormChange} errors={errors} />}
-                {step === 4 && <Step4 answers={answers} onAnswer={handleAnswer} error={qError} />}
-                {step === 5 && <Step5 form={form} captador={captador} firmaData={firmaData} onFirma={setFirmaData} error={firmaError} />}
-                {step === 6 && <Step6 form={form} captador={captador} answers={answers} />}
-              </main>
-              <BottomBar
-                tab="propuesta"
-                step={step}
-                onBack={prevStep}
-                onNext={nextStep}
-                onGenerate={handleGenerate}
-                generating={generating}
-              />
-            </>
-          )}
-        </>
+          </>
+        )
       )}
 
-      {/* ── TAB: PERFIL COMPRADOR ── */}
+      {/* ── TAB PERFIL ── */}
       {activeTab === 'perfil' && (
-        <>
-          {perfilDone ? (
-            <SuccessScreen
-              captador={perfilCaptador}
-              isDownload={false}
-              onReset={resetPerfil}
-              customTitle="¡Perfil enviado!"
-              customDesc="El perfil del comprador ha sido enviado al captador por Slack."
+        perfilDone ? (
+          <SuccessScreen
+            captador={perfilCaptador}
+            isDownload={false}
+            onReset={resetPerfil}
+            customTitle="¡Perfil enviado!"
+            customDesc="El perfil del comprador y los documentos han sido enviados al captador por Slack."
+          />
+        ) : (
+          <main className={styles.main}>
+            <p className="step-title">Perfil del Comprador</p>
+            <p className="step-desc">
+              Rellena el perfil y el checklist. Al pulsar enviar, el captador recibirá toda la información y los documentos por Slack.
+            </p>
+            <PerfilComprador
+              slackToken={slackToken}
+              agenteRemitente={agenteRemitente}
+              onSuccess={(cap) => { setPerfilCaptador(cap); setPerfilDone(true); }}
             />
-          ) : (
-            <main className={styles.main}>
-              <p className="step-title">Perfil del Comprador</p>
-              <p className="step-desc">
-                Rellena el perfil y el checklist. Al pulsar enviar, el captador recibirá toda la información por Slack.
-              </p>
-              <PerfilComprador
-                slackToken={slackToken}
-                agenteRemitente={agenteRemitente}
-                onSuccess={(cap) => { setPerfilCaptador(cap); setPerfilDone(true); }}
-              />
-            </main>
-          )}
-        </>
+          </main>
+        )
       )}
     </>
   );

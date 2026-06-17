@@ -22,3 +22,14 @@
   color: var(--gray-600);
   flex: 1;
 }
+
+.pdfNote {
+  background: var(--orange-light);
+  border: 1px solid #f0c896;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #7a3a0a;
+  margin-top: 4px;
+  line-height: 1.5;
+}

@@ -1,4 +1,4 @@
-// Captadores ordenados alfabéticamente por nombre
+// Captadores ordenados alfabéticamente
 export const CAPTADORES = [
   { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
   { name: 'Almudena Gálvez',    channel: 'DIRECT',        initials: 'AL' },
@@ -27,23 +27,23 @@ export const CAPTADORES = [
 export const PREGUNTAS = [
   '¿Se te ha informado de que esta oferta está sujeta a la aprobación por parte del propietario?',
   '¿Se te ha informado de que esto puede ser así aunque la oferta sea en precio?',
-  '¿Se te ha informado de que si se traslada una oferta por debajo del precio publicado, ésta debe ser aceptada por parte del propietario?',
+  '¿Se te ha informado de que, si se traslada una oferta por debajo del precio publicado, ésta debe ser aceptada por parte del propietario?',
   '¿Se te ha informado de que la agencia inmobiliaria solo tiene autorización para reservar la vivienda cuando tenga una propuesta aceptada por el propietario?',
   '¿Se te ha informado de que la agencia inmobiliaria no puede dar de baja el inmueble de los portales sin una aceptación por parte del propietario, y por tanto, mientras eso suceda, pueden haber más visitas / ofertas?',
   '¿Necesita financiación?',
-  '¿La tiene aprobada en alguna entidad bancaria?',
-  '¿Necesita una tasación y la tiene ya en estudio?',
-  '¿Sabe que tendrá que firmar las arras en el tiempo estipulado en la propuesta de compra que se está firmando?',
+  '¿La tenéis aprobada en alguna entidad bancaria?',
+  '¿Necesitas una tasación y la tienes ya en estudio?',
+  `¿Sabéis que tendréis que firmar las arras en el tiempo estipulado en la propuesta de compra que se está firmando?`,
   '¿Se te ha informado con carácter previo a realizar la oferta que para la tramitación y gestión de ésta deberá abonar, en caso de realizarse la compraventa, honorarios a RK PALANCA FONTESTAD?',
   '¿Se le ha informado de que si quiere pactar otras condiciones adicionales debe plantearlo al firmar el documento de oferta, no una vez éste haya sido aceptado?',
   '¿Se le ha informado de que si se traslada una oferta por parte del comprador, se acepta, y luego no se firman las arras, perderá la señal entregada como reserva?',
 ];
 
+// 5 pasos — sin firma
 export const STEPS_PROPUESTA = [
   { label: 'Inmueble' },
   { label: 'Comprador' },
   { label: 'Oferta' },
   { label: 'Cuestionario' },
-  { label: 'Firma' },
-  { label: 'Documento' },
+  { label: 'Generar' },
 ];

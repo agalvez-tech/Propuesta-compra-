@@ -1,6 +1,8 @@
 import styles from './BottomBar.module.css';
 
-export default function BottomBar({ step, onBack, onNext, onGenerate, onSendPerfil, generating, sending, tab }) {
+export default function BottomBar({ step, totalSteps = 5, onBack, onNext, onGenerate, onSendPerfil, generating, sending, tab }) {
+  const isLast = step === totalSteps;
+
   return (
     <div className={styles.bar}>
       <button
@@ -12,13 +14,13 @@ export default function BottomBar({ step, onBack, onNext, onGenerate, onSendPerf
         ← Atrás
       </button>
 
-      {tab === 'propuesta' && step < 6 && (
+      {tab === 'propuesta' && !isLast && (
         <button className={`${styles.btn} ${styles.primary}`} onClick={onNext} type="button">
           Continuar →
         </button>
       )}
 
-      {tab === 'propuesta' && step === 6 && (
+      {tab === 'propuesta' && isLast && (
         <button
           className={`${styles.btn} ${styles.primary}`}
           onClick={onGenerate}
@@ -29,7 +31,7 @@ export default function BottomBar({ step, onBack, onNext, onGenerate, onSendPerf
         </button>
       )}
 
-      {tab === 'perfil' && step === 1 && (
+      {tab === 'perfil' && (
         <button
           className={`${styles.btn} ${styles.primary}`}
           onClick={onSendPerfil}
