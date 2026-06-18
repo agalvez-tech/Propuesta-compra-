@@ -1,11 +1,11 @@
-import { STEPS_PROPUESTA } from '../data';
+import { STEPS } from '../data';
 import styles from './Stepper.module.css';
 
 export default function Stepper({ current }) {
   return (
     <div className={styles.wrap}>
       <div className={styles.stepper}>
-        {STEPS_PROPUESTA.map((step, i) => {
+        {STEPS.map((step, i) => {
           const n = i + 1;
           const done = n < current;
           const active = n === current;

@@ -1,4 +1,3 @@
-// Captadores ordenados alfabéticamente
 export const CAPTADORES = [
   { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
   { name: 'Almudena Gálvez',    channel: 'DIRECT',        initials: 'AL' },
@@ -12,8 +11,8 @@ export const CAPTADORES = [
   { name: 'Fran Estelles',      channel: 'C0AAUMPTSGM',  initials: 'FE' },
   { name: 'Jose Giménez',       channel: 'C0ABSMNFDCY',  initials: 'JG' },
   { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
-  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
   { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
+  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
   { name: 'Mavi Castillo',      channel: 'C0ABT3HLT1N',  initials: 'MC' },
   { name: 'Mª Luisa Bellver',   channel: 'C0AAXU0MC4W',  initials: 'ML' },
   { name: 'Natalia Sanfélix',   channel: 'C0AAWH6HJ3X',  initials: 'NS' },
@@ -33,14 +32,13 @@ export const PREGUNTAS = [
   '¿Necesita financiación?',
   '¿La tenéis aprobada en alguna entidad bancaria?',
   '¿Necesitas una tasación y la tienes ya en estudio?',
-  `¿Sabéis que tendréis que firmar las arras en el tiempo estipulado en la propuesta de compra que se está firmando?`,
+  '¿Sabéis que tendréis que firmar las arras en el tiempo estipulado en la propuesta de compra que se está firmando?',
   '¿Se te ha informado con carácter previo a realizar la oferta que para la tramitación y gestión de ésta deberá abonar, en caso de realizarse la compraventa, honorarios a RK PALANCA FONTESTAD?',
   '¿Se le ha informado de que si quiere pactar otras condiciones adicionales debe plantearlo al firmar el documento de oferta, no una vez éste haya sido aceptado?',
   '¿Se le ha informado de que si se traslada una oferta por parte del comprador, se acepta, y luego no se firman las arras, perderá la señal entregada como reserva?',
 ];
 
-// 5 pasos — sin firma
-export const STEPS_PROPUESTA = [
+export const STEPS = [
   { label: 'Inmueble' },
   { label: 'Comprador' },
   { label: 'Oferta' },

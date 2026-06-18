@@ -1,5 +1,5 @@
 import { PREGUNTAS } from '../data';
-import { fmtEuros } from '../utils/pdf';
+import { fmtEuros } from '../utils/docx';
 import styles from './StepShared.module.css';
 import s6 from './Step6.module.css';
 import SectionCard from '../components/SectionCard';

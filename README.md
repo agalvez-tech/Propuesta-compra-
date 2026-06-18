@@ -1,35 +1,23 @@
-# Propuesta de Compra · RK Palanca Fontestad
+# RK Propuesta Contrato
 
-App interna para que los agentes generen y envíen propuestas de compra firmadas digitalmente.
+App interna de RK Palanca Fontestad para redactar y descargar propuestas de compra en Word.
 
-## Stack
-- React 18 + Vite
-- jsPDF (generación de PDF corporativo)
-- CSS Modules
-- Slack Web API (envío al captador)
+## Flujo (5 pasos)
+1. **Inmueble** — dirección, ref. comercial, captador
+2. **Comprador** — datos personales, agente que hizo la visita
+3. **Oferta** — precio, reserva, arras, plazos, condicionantes
+4. **Cuestionario** — 12 preguntas SÍ/NO de control
+5. **Generar** — descarga el .docx con logo, cláusulas legales completas y datos fiscales
 
-## Despliegue en Vercel
-
-### 1. Subir a GitHub
+## Deploy en Vercel
 ```bash
-git init
-git add .
-git commit -m "feat: propuesta de compra"
-git remote add origin https://github.com/TU_USUARIO/propuesta-compra.git
+git init && git add . && git commit -m "init"
+git remote add origin https://github.com/agalvez-tech/rk-propuesta-contrato.git
 git push -u origin main
 ```
-
-### 2. Conectar en Vercel
-1. vercel.com → Add New Project → importa el repo
-2. Vercel detecta Vite automáticamente (build: `npm run build`, output: `dist`)
-3. Deploy
-
-### 3. Token Slack (una sola vez por dispositivo)
-En el paso 6 introduce el token `xoxb-...`. Se guarda en localStorage.
-Permisos necesarios: `chat:write`, `files:write`.
+Vercel detecta Vite automáticamente. Sin variables de entorno.
 
 ## Desarrollo local
 ```bash
-npm install
-npm run dev
+npm install && npm run dev
 ```
