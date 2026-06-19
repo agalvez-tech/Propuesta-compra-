@@ -131,12 +131,23 @@ function checkbox(text, answer) {
 export async function generateDocx(formData, questionData) {
   const {
     viviendaDir = '', viviendaRef = '', lugarFirma = 'Foios',
-    compradorNombre = '', compradorNif = '',
+    compradores = [],
     agenteVisitaNombre = '', agenteVisitaDni = '',
     precioTotal, importeReserva, importeArras,
     plazoArras = '5', plazoVigencia = '7',
     fechaEscritura = '', observaciones = '',
   } = formData;
+
+  // Build comprador helpers
+  const compradoresList = compradores.length > 0
+    ? compradores
+    : [{ nombre: formData.compradorNombre || '', nif: formData.compradorNif || '', tel: '' }];
+  const compradorPrincipal = compradoresList[0];
+  const compradorNombre = compradorPrincipal.nombre || '…………………………………';
+  const compradorNif = compradorPrincipal.nif || '…………………………………';
+  const esPlural = compradoresList.length > 1;
+  const nombresFormateados = compradoresList.map(c => c.nombre || '…………………………………').join(' y ');
+  const nifsFormateados = compradoresList.map(c => c.nif || '…………………………………').join(' y ');
 
   const { questions, answers } = questionData;
   const today = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -188,16 +199,14 @@ export async function generateDocx(formData, questionData) {
     { align: AlignmentType.CENTER, before: 0, after: 120, keepNext: true }
   ));
 
-  // Intro
+  // Intro — adapts for single or multiple compradores
   body.push(para(
     [
-      run('Dª ', { bold: true, size: SZ_BODY }),
-      run(compradorNombre || '…………………………………', { bold: true, size: SZ_BODY }),
+      run(nombresFormateados, { bold: true, size: SZ_BODY }),
       run(' con N.I.F/D.N.I ', { size: SZ_BODY }),
-      run(compradorNif || '…………………………………', { bold: true, size: SZ_BODY }),
-      run(', en adelante el ', { size: SZ_BODY }),
-      run('COMPRADOR', { bold: true, size: SZ_BODY }),
-      run(', por medio de este documento realiza la presente propuesta de compra en las condiciones en ella establecidas para la adquisición de la vivienda sita en ', { size: SZ_BODY }),
+      run(nifsFormateados, { bold: true, size: SZ_BODY }),
+      run(esPlural ? ', en adelante los COMPRADORES,' : ', en adelante el COMPRADOR,', { size: SZ_BODY }),
+      run(' por medio de este documento realizan la presente propuesta de compra en las condiciones en ella establecidas para la adquisición de la vivienda sita en ', { size: SZ_BODY }),
       run(viviendaDir || '…………………………………', { bold: true, size: SZ_BODY }),
       run('  Ref. comercial: ', { size: SZ_BODY }),
       run(viviendaRef || '………………………', { bold: true, size: SZ_BODY }),
@@ -364,7 +373,15 @@ export async function generateDocx(formData, questionData) {
   });
 
   body.push(blank(120, 100));
-  body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', compradorNombre));
+  // Signature lines for cuestionario — one per comprador if multiple
+  if (esPlural) {
+    compradoresList.forEach(c => {
+      body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', c.nombre || ''));
+      body.push(blank(40, 40));
+    });
+  } else {
+    body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', compradorNombre));
+  }
 
   // ── PAGE BREAK → HONORARIOS ────────────────────────────────────────────────
   body.push(new Paragraph({ children: [new PageBreak()] }));
@@ -376,11 +393,11 @@ export async function generateDocx(formData, questionData) {
 
   body.push(para(
     [
-      run('Dª ', { bold: true }),
-      run(compradorNombre || '…………………………………', { bold: true }),
+      run(nombresFormateados, { bold: true }),
       run(' con N.I.F/D.N.I nº ', {}),
-      run(compradorNif || '…………………………………', { bold: true }),
-      run(', en adelante el OFERTANTE, declara haber aceptado la presentación de posibles propiedades por parte del Agente Dº ', {}),
+      run(nifsFormateados, { bold: true }),
+      run(esPlural ? ', en adelante los OFERTANTES, declaran' : ', en adelante el OFERTANTE, declara', {}),
+      run(' haber aceptado la presentación de posibles propiedades por parte del Agente Dº ', {}),
       run(agenteVisitaNombre || '…………………………………', { bold: true }),
       run(agenteVisitaDni ? ' con DNI: ' + agenteVisitaDni : '', {}),
       run(' que representa a ', {}),
@@ -429,7 +446,15 @@ export async function generateDocx(formData, questionData) {
     { before: 60, after: 200 }
   ));
 
-  body.push(signatureLine('RK PALANCA FONTESTAD', compradorNombre || '…………………………………'));
+  // Final signatures — one per comprador if multiple
+  if (esPlural) {
+    compradoresList.forEach(c => {
+      body.push(signatureLine('RK PALANCA FONTESTAD', c.nombre || '…………………………………'));
+      body.push(blank(40, 40));
+    });
+  } else {
+    body.push(signatureLine('RK PALANCA FONTESTAD', compradorNombre));
+  }
 
   // ── ASSEMBLE DOCUMENT ─────────────────────────────────────────────────────
   const docObj = new Document({

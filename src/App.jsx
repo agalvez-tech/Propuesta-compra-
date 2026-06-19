@@ -12,13 +12,12 @@ import { PREGUNTAS } from './data';
 import { generateDocx, downloadDocx } from './utils/docx';
 import styles from './App.module.css';
 
+const EMPTY_COMPRADOR = { nombre: '', nif: '', tel: '' };
+
 const INITIAL_FORM = {
   viviendaDir: '',
   viviendaRef: '',
   lugarFirma: 'Foios',
-  compradorNombre: '',
-  compradorNif: '',
-  compradorTel: '',
   agenteVisitaNombre: '',
   agenteVisitaDni: '',
   precioTotal: '',
@@ -35,6 +34,7 @@ const TOTAL_STEPS = 5;
 export default function App() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
+  const [compradores, setCompradores] = useState([{ ...EMPTY_COMPRADOR }]);
   const [captador, setCaptador] = useState(null);
   const [answers, setAnswers] = useState(Array(PREGUNTAS.length).fill(null));
   const [errors, setErrors] = useState({});
@@ -45,6 +45,23 @@ export default function App() {
   function handleFormChange(key, value) {
     setForm(prev => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: false }));
+  }
+
+  function handleCompradorChange(i, field, value) {
+    setCompradores(prev => {
+      const next = prev.map((c, idx) => idx === i ? { ...c, [field]: value } : c);
+      return next;
+    });
+    const errKey = `comprador${field.charAt(0).toUpperCase() + field.slice(1)}_${i}`;
+    if (errors[errKey]) setErrors(prev => ({ ...prev, [errKey]: false }));
+  }
+
+  function addComprador() {
+    setCompradores(prev => [...prev, { ...EMPTY_COMPRADOR }]);
+  }
+
+  function removeComprador(i) {
+    setCompradores(prev => prev.filter((_, idx) => idx !== i));
   }
 
   function handleAnswer(i, ans) {
@@ -63,8 +80,10 @@ export default function App() {
     }
     if (step === 2) {
       const errs = {};
-      if (!form.compradorNombre.trim()) errs.compradorNombre = true;
-      if (!form.compradorNif.trim()) errs.compradorNif = true;
+      compradores.forEach((c, i) => {
+        if (!c.nombre.trim()) errs[`compradorNombre_${i}`] = true;
+        if (!c.nif.trim()) errs[`compradorNif_${i}`] = true;
+      });
       if (!form.agenteVisitaNombre.trim()) errs.agenteVisitaNombre = true;
       setErrors(errs);
       return Object.keys(errs).length === 0;
@@ -101,7 +120,7 @@ export default function App() {
     const filename = `propuesta-${form.viviendaRef || 'compra'}-${today}.docx`;
     try {
       const blob = await generateDocx(
-        { ...form },
+        { ...form, compradores },
         { questions: PREGUNTAS, answers }
       );
       downloadDocx(blob, filename);
@@ -116,6 +135,7 @@ export default function App() {
   function reset() {
     setStep(1);
     setForm(INITIAL_FORM);
+    setCompradores([{ ...EMPTY_COMPRADOR }]);
     setCaptador(null);
     setAnswers(Array(PREGUNTAS.length).fill(null));
     setErrors({});
@@ -132,7 +152,7 @@ export default function App() {
           isDownload={true}
           onReset={reset}
           customTitle="¡Documento generado!"
-          customDesc="La propuesta de compra se ha descargado como Word (.docx) con todas las cláusulas legales. Puedes abrirlo y editarlo desde Word."
+          customDesc="La propuesta de compra se ha descargado como Word (.docx) con todas las cláusulas legales."
         />
       </>
     );
@@ -144,10 +164,21 @@ export default function App() {
       <Stepper current={step} />
       <main className={styles.main}>
         {step === 1 && <Step1 form={form} onChange={handleFormChange} captador={captador} onCaptador={setCaptador} errors={errors} />}
-        {step === 2 && <Step2 form={form} onChange={handleFormChange} errors={errors} />}
+        {step === 2 && (
+          <Step2
+            compradores={compradores}
+            onCompradorChange={handleCompradorChange}
+            onAddComprador={addComprador}
+            onRemoveComprador={removeComprador}
+            agenteVisitaNombre={form.agenteVisitaNombre}
+            agenteVisitaDni={form.agenteVisitaDni}
+            onAgenteChange={handleFormChange}
+            errors={errors}
+          />
+        )}
         {step === 3 && <Step3 form={form} onChange={handleFormChange} errors={errors} />}
         {step === 4 && <Step4 answers={answers} onAnswer={handleAnswer} error={qError} />}
-        {step === 5 && <Step5Final form={form} captador={captador} answers={answers} />}
+        {step === 5 && <Step5Final form={form} compradores={compradores} captador={captador} answers={answers} />}
       </main>
       <BottomBar
         tab="propuesta"
