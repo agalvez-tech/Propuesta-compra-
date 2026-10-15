@@ -14,7 +14,6 @@ export const CAPTADORES = [
   { name: 'Jose Miguel Palanca', channel: 'U0A7ANNJ3E3', initials: 'JM' }, // sin canal de dinamización: DM a su usuario
   { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
   { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
-  { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
   { name: 'Mavi Castillo',      channel: 'C0ABT3HLT1N',  initials: 'MC' },
   { name: 'Mª Luisa Bellver',   channel: 'C0AAXU0MC4W',  initials: 'ML' },
   { name: 'Natalia Sanfélix',   channel: 'C0AAWH6HJ3X',  initials: 'NS' },
