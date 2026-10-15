@@ -9,7 +9,9 @@ export const CAPTADORES = [
   { name: 'Eva Vallés',         channel: 'C0AAJS3F0A3',  initials: 'EV' },
   { name: 'Fede Carbonell',     channel: 'C0ABB13HW1F',  initials: 'FC' },
   { name: 'Fran Estelles',      channel: 'C0AAUMPTSGM',  initials: 'FE' },
+  { name: 'Javi Palanca',       channel: 'U0A7S63DRQS',  initials: 'JP' }, // sin canal de dinamización: DM a su usuario
   { name: 'Jose Giménez',       channel: 'C0ABSMNFDCY',  initials: 'JG' },
+  { name: 'Jose Miguel Palanca', channel: 'U0A7ANNJ3E3', initials: 'JM' }, // sin canal de dinamización: DM a su usuario
   { name: 'Lorena Lull',        channel: 'C0AAS26GAKD',  initials: 'LL' },
   { name: 'Maria Jose Ordoñez', channel: 'C0AAJGP9K0F',  initials: 'MJ' },
   { name: 'Mariano Del Prado',  channel: 'C0B5FDE159T',  initials: 'MP' },
