@@ -52,7 +52,7 @@ export const STEPS = [
 // la propuesta firmada. Mismos IDs que PERFIL-COMPRADOR (AGENTS_SLACK).
 export const AGENTES = [
   { name: 'Alejandro García',    slackId: 'U0A8F8S4PV1' },
-  { name: 'Almudena Gálvez',     slackId: '' },            // pendiente de su usuario de Slack
+  { name: 'Almudena Gálvez',     slackId: 'U0A7KM0FREX' },
   { name: 'Amparo Orts',         slackId: 'U0A9G0NM3CY' },
   { name: 'Asunción Marco',      slackId: 'U0A8F4ATGM9' },
   { name: 'Clara Ordoñez',       slackId: 'U0A8KKYSVFY' },
