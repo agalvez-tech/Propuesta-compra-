@@ -45,4 +45,39 @@ export const STEPS = [
   { label: 'Oferta' },
   { label: 'Cuestionario' },
   { label: 'Generar' },
+  { label: 'Firmar' },
 ];
+
+// Agente comprador (el que hizo la visita): su usuario de Slack recibe por privado
+// la propuesta firmada. Mismos IDs que PERFIL-COMPRADOR (AGENTS_SLACK).
+export const AGENTES = [
+  { name: 'Alejandro García',    slackId: 'U0A8F8S4PV1' },
+  { name: 'Almudena Gálvez',     slackId: '' },            // pendiente de su usuario de Slack
+  { name: 'Amparo Orts',         slackId: 'U0A9G0NM3CY' },
+  { name: 'Asunción Marco',      slackId: 'U0A8F4ATGM9' },
+  { name: 'Clara Ordoñez',       slackId: 'U0A8KKYSVFY' },
+  { name: 'Claudia Stelling',    slackId: 'U0A8J7BJ9CM' },
+  { name: 'Desiree López',       slackId: 'U0A867VKVTR' },
+  { name: 'Eva Vallés',          slackId: 'U0A8KK02Z6J' },
+  { name: 'Fede Carbonell',      slackId: 'U0A90DLPULR' },
+  { name: 'Fran Estelles',       slackId: 'U0A8J7808AH' },
+  { name: 'Javi Palanca',        slackId: 'U0A7S63DRQS' },
+  { name: 'Jose Giménez',        slackId: 'U0A865TURHD' },
+  { name: 'Jose Miguel Palanca', slackId: 'U0A7ANNJ3E3' },
+  { name: 'Lorena Lull',         slackId: 'U0A8KK0TG94' },
+  { name: 'Maria Jose Lluch',    slackId: 'U0C5L0Q4E2K' },
+  { name: 'Maria Jose Ordoñez',  slackId: 'U0AAFGXHKV2' },
+  { name: 'Mavi Castillo',       slackId: 'U0A8MLSNHV0' },
+  { name: 'Mª Luisa Bellver',    slackId: 'U0A8KL3AYPQ' },
+  { name: 'Natalia Sanfélix',    slackId: 'U0A8J79MECV' },
+  { name: 'Nuria',               slackId: 'U0B2HH7UXHU' },
+  { name: 'Rosa Doménech',       slackId: 'U0A8R8ZQSBW' },
+  { name: 'Sefa Gallent',        slackId: 'U0A8F9QGQTD' },
+  { name: 'Virginia Corral',     slackId: 'U0A8KL4AC94' },
+  { name: 'Yvonne Vidal',        slackId: 'U0B2G5FG337' },
+];
+
+// Firma digital (Documenso, servicio pdf-informe-slack). La clave solo frena el
+// uso anónimo del endpoint (va a la vista en el JS, como el PIN de los formularios).
+export const FIRMA_URL = 'https://pdf-informe-slack-522842131600.europe-west1.run.app/propuesta/enviar-firma';
+export const FIRMA_KEY = 'rkprop-5045-firma';

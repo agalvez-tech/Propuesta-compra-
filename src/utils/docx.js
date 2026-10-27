@@ -64,14 +64,21 @@ function blank(before = 60, after = 60) {
   return para([run('')], { before, after });
 }
 
-function signatureLine(leftLabel, rightLabel, leftSub = '', rightSub = '') {
+// Marca invisible donde va cada firma digital (Documenso): el editor la muestra
+// como etiqueta y el servidor la sustituye por el campo de firma / el sello de RK.
+// C1, C2... = comprador 1, 2...; RK = firma de la empresa.
+export const marcaFirma = (quien) => `[[FIRMA:${quien}]]`;
+
+function signatureLine(leftLabel, rightLabel, leftSub = '', rightSub = '', leftMark = '', rightMark = '') {
   const border = { style: BorderStyle.SINGLE, size: 4, color: BLACK };
   const noBorder = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
-  const cell = (label, sub) => new TableCell({
+  const cell = (label, sub, mark) => new TableCell({
     width: { size: CONTENT_W / 2, type: WidthType.DXA },
     borders: { top: border, bottom: noBorder, left: noBorder, right: noBorder },
     margins: { top: 120, bottom: 60, left: 0, right: 0 },
     children: [
+      // la marca va la primera, pegada a la raya: la firma se pone justo encima
+      ...(mark ? [para([run(marcaFirma(mark), { size: 2, color: 'FFFFFF' })], { align: AlignmentType.CENTER, before: 0, after: 0 })] : []),
       para([run(label, { bold: true, size: SZ_SMALL })], { align: AlignmentType.CENTER, before: 0, after: 0 }),
       ...(sub ? [para([run(sub, { size: SZ_SMALL, color: LGRAY })], { align: AlignmentType.CENTER, before: 0, after: 0 })] : []),
     ],
@@ -79,7 +86,7 @@ function signatureLine(leftLabel, rightLabel, leftSub = '', rightSub = '') {
   return new Table({
     width: { size: CONTENT_W, type: WidthType.DXA },
     columnWidths: [CONTENT_W / 2, CONTENT_W / 2],
-    rows: [new TableRow({ children: [cell(leftLabel, leftSub), cell(rightLabel, '')] })],
+    rows: [new TableRow({ children: [cell(leftLabel, leftSub, leftMark), cell(rightLabel, rightSub, rightMark)] })],
     margins: { top: 240, bottom: 120 },
   });
 }
@@ -343,7 +350,11 @@ export async function generateDocx(formData, questionData) {
     { before: 120, after: 200 }
   ));
 
-  body.push(signatureLine('EL COMPRADOR', 'RK PALANCA FONTESTAD', compradorNombre));
+  // Una línea de firma por comprador (cada uno firma digitalmente la suya)
+  compradoresList.forEach((c, i) => {
+    body.push(signatureLine('EL COMPRADOR', 'RK PALANCA FONTESTAD', c.nombre || compradorNombre, '', `C${i + 1}`, 'RK'));
+    if (esPlural) body.push(blank(40, 40));
+  });
   body.push(blank(200, 100));
 
   // Tablas aceptación/no aceptación vendedor
@@ -374,14 +385,10 @@ export async function generateDocx(formData, questionData) {
 
   body.push(blank(120, 100));
   // Signature lines for cuestionario — one per comprador if multiple
-  if (esPlural) {
-    compradoresList.forEach(c => {
-      body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', c.nombre || ''));
-      body.push(blank(40, 40));
-    });
-  } else {
-    body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', compradorNombre));
-  }
+  compradoresList.forEach((c, i) => {
+    body.push(signatureLine('EL OFERTANTE', 'RK PALANCA FONTESTAD', c.nombre || compradorNombre, '', `C${i + 1}`, 'RK'));
+    if (esPlural) body.push(blank(40, 40));
+  });
 
   // ── PAGE BREAK → HONORARIOS ────────────────────────────────────────────────
   body.push(new Paragraph({ children: [new PageBreak()] }));
@@ -447,14 +454,10 @@ export async function generateDocx(formData, questionData) {
   ));
 
   // Final signatures — one per comprador if multiple
-  if (esPlural) {
-    compradoresList.forEach(c => {
-      body.push(signatureLine('RK PALANCA FONTESTAD', c.nombre || '…………………………………'));
-      body.push(blank(40, 40));
-    });
-  } else {
-    body.push(signatureLine('RK PALANCA FONTESTAD', compradorNombre));
-  }
+  compradoresList.forEach((c, i) => {
+    body.push(signatureLine('RK PALANCA FONTESTAD', c.nombre || compradorNombre, '', '', 'RK', `C${i + 1}`));
+    if (esPlural) body.push(blank(40, 40));
+  });
 
   // ── ASSEMBLE DOCUMENT ─────────────────────────────────────────────────────
   const docObj = new Document({
