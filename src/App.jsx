@@ -212,7 +212,7 @@ export default function App() {
           isDownload={true}
           onReset={reset}
           customTitle="¡Enviada a firmar!"
-          customDesc={`La propuesta de compra se ha enviado a firmar a ${enviadoA.join(' y ')} (email y SMS). Cuando firmen, llegará al canal de la vivienda y a ${form.agenteVisitaNombre || 'el agente'} por Slack.`}
+          customDesc={`La propuesta de compra se ha enviado a firmar a ${enviadoA.join(' y ')} (email y SMS). Cuando firmen, le llegará firmada a ${form.agenteVisitaNombre || 'el agente'} por privado en Slack.`}
         />
       </>
     );

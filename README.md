@@ -10,8 +10,8 @@ App interna de RK Palanca Fontestad para redactar y descargar propuestas de comp
 5. **Generar** — genera el .docx de siempre (logo, cláusulas legales completas y datos fiscales)
 6. **Firmar** — el documento se abre en la web para revisarlo y editarlo a mano (o descargar el Word).
    *Enviar para firmar* lo manda a firmar digitalmente (Documenso) a los compradores por email y SMS;
-   la firma de RK va estampada. Cuando firman todos, el PDF firmado llega al canal de Slack de la
-   vivienda (por su ref) y por privado al agente que hizo la visita.
+   la firma de RK va estampada. Cuando firman todos, el PDF firmado llega por privado en Slack al
+   agente que hizo la visita (no al canal de la vivienda).
 
 La firma la hace el servicio `pdf-informe-slack` (Cloud Run, proyecto contratos-498808),
 endpoint `/propuesta/enviar-firma` (ver `FIRMA_URL` / `FIRMA_KEY` en `src/data/index.js`).
