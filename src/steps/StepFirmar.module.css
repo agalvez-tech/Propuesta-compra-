@@ -1,0 +1,90 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+}
+
+.tool {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.tool:hover { background: var(--orange-light, #fdf1e6); }
+
+.sep { flex: 1; }
+
+.hoja {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+  border-radius: 4px;
+  padding: 28px 34px 20px;
+  max-width: 760px;
+  margin: 0 auto 90px;
+}
+
+.logo { display: block; height: 30px; margin: 0 0 18px auto; }
+
+.pie {
+  margin-top: 28px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  font-size: 9px;
+  color: #777;
+  text-align: center;
+}
+
+.doc {
+  outline: none;
+  font-family: Calibri, Carlito, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #1a1a1a;
+  min-height: 300px;
+}
+
+.doc :global(p) { margin: 4px 0; text-align: justify; }
+.doc :global(p.c) { text-align: center; }
+.doc :global(p.h) {
+  color: #cf731b;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid #cf731b;
+  margin-top: 12px;
+}
+.doc :global(table) { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.doc :global(td) { border: 1px solid #bbb; padding: 4px 6px; vertical-align: top; font-size: 12px; }
+.doc :global(table.tfirma) { margin-top: 40px; }
+.doc :global(table.tfirma td) { border: none; border-top: 1px solid #1a1a1a; width: 50%; }
+.doc :global(table.tfirma p) { text-align: center; margin: 0; }
+.doc :global(hr.pb) {
+  border: none;
+  border-top: 2px dashed #e3c6a6;
+  margin: 26px -34px;
+}
+
+.doc :global(.firma-chip), .chipDemo {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  user-select: none;
+  white-space: nowrap;
+}
+.doc :global(.firma-chip.cli), .chipDemo { background: #e8f1fd; color: #1d4ed8; border: 1px dashed #93b4f5; }
+.doc :global(.firma-chip.rk) { background: #fdf1e6; color: #9a4f0d; border: 1px dashed #f0c896; }

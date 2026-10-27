@@ -1,9 +1,16 @@
 import SectionCard from '../components/SectionCard';
+import { AGENTES } from '../data';
 import Field from '../components/Field';
 import styles from './StepShared.module.css';
 import s from './Step2.module.css';
 
 export default function Step2({ compradores, onCompradorChange, onAddComprador, onRemoveComprador, agenteVisitaNombre, agenteVisitaDni, onAgenteChange, errors }) {
+  function elegirAgente(nombre) {
+    const a = AGENTES.find(x => x.name === nombre);
+    onAgenteChange('agenteVisitaNombre', nombre);
+    onAgenteChange('agenteVisitaSlackId', a ? a.slackId : '');
+  }
+
   return (
     <div>
       <p className="step-title">Datos del comprador</p>
@@ -61,6 +68,15 @@ export default function Step2({ compradores, onCompradorChange, onAddComprador, 
                 />
               </Field>
             </div>
+            <Field label="Email (le llega la propuesta para firmar)" required>
+              <input
+                type="email"
+                value={c.email || ''}
+                onChange={e => onCompradorChange(i, 'email', e.target.value)}
+                placeholder="email@ejemplo.com"
+                className={errors[`compradorEmail_${i}`] ? styles.inputError : ''}
+              />
+            </Field>
           </div>
         </div>
       ))}
@@ -73,13 +89,14 @@ export default function Step2({ compradores, onCompradorChange, onAddComprador, 
       <SectionCard icon="💼" title="Agente que realizó la visita">
         <div className={styles.grid2}>
           <Field label="Nombre del agente" required>
-            <input
-              type="text"
+            <select
               value={agenteVisitaNombre}
-              onChange={e => onAgenteChange('agenteVisitaNombre', e.target.value)}
-              placeholder="Nombre completo"
+              onChange={e => elegirAgente(e.target.value)}
               className={errors.agenteVisitaNombre ? styles.inputError : ''}
-            />
+            >
+              <option value="">Elige el agente…</option>
+              {AGENTES.map(a => <option key={a.name} value={a.name}>{a.name}</option>)}
+            </select>
           </Field>
           <Field label="DNI del agente">
             <input
