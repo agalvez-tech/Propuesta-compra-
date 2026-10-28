@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AppHeader from './components/AppHeader';
 import Stepper from './components/Stepper';
 import BottomBar from './components/BottomBar';
@@ -34,22 +34,83 @@ const INITIAL_FORM = {
 
 const TOTAL_STEPS = 6;   // 5 = generar, 6 = revisar/editar y enviar a firmar
 
+/* Borrador en el navegador (como en arras): lo rellenado -- y lo escrito a mano en
+   el documento del paso 6 -- se guarda mientras se escribe, para que cerrar o
+   recargar la página no obligue a empezar de nuevo. Se borra al enviar a firmar. */
+const BORRADOR_KEY = 'rk-propuesta-borrador-v1';
+
+function leerBorrador() {
+  try {
+    const b = JSON.parse(localStorage.getItem(BORRADOR_KEY) || 'null');
+    return b && typeof b === 'object' && b.form ? b : null;
+  } catch {
+    return null;
+  }
+}
+
+function escribirBorrador(b) {
+  try {
+    if (b) localStorage.setItem(BORRADOR_KEY, JSON.stringify(b));
+    else localStorage.removeItem(BORRADOR_KEY);
+  } catch {
+    /* modo privado o almacenamiento lleno: se sigue sin borrador */
+  }
+}
+
+const tieneDatos = (b) => !!b && (
+  JSON.stringify({ ...INITIAL_FORM, ...b.form }) !== JSON.stringify(INITIAL_FORM) ||
+  (b.compradores || []).some(c => c.nombre || c.nif || c.tel || c.email) ||
+  !!b.captador
+);
+
 export default function App() {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [compradores, setCompradores] = useState([{ ...EMPTY_COMPRADOR }]);
-  const [captador, setCaptador] = useState(null);
-  const [answers, setAnswers] = useState(Array(PREGUNTAS.length).fill(null));
+  const [borradorInicial] = useState(() => { const b = leerBorrador(); return tieneDatos(b) ? b : null; });
+  const ini = borradorInicial;
+  const [step, setStep] = useState(() => (ini?.step === 6 && !ini.html) ? 5 : (ini?.step || 1));
+  const [form, setForm] = useState(() => ({ ...INITIAL_FORM, ...(ini?.form || {}) }));
+  const [compradores, setCompradores] = useState(() => ini?.compradores?.length ? ini.compradores : [{ ...EMPTY_COMPRADOR }]);
+  const [captador, setCaptador] = useState(() => ini?.captador ?? null);
+  const [answers, setAnswers] = useState(() =>
+    Array.isArray(ini?.answers) && ini.answers.length === PREGUNTAS.length ? ini.answers : Array(PREGUNTAS.length).fill(null));
   const [errors, setErrors] = useState({});
   const [qError, setQError] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [done, setDone] = useState(false);
   const [docx, setDocx] = useState(null);           // Word generado (paso 5)
-  const [htmlDoc, setHtmlDoc] = useState('');       // ese Word en HTML editable (paso 6)
-  const [editado, setEditado] = useState(false);
+  const [htmlDoc, setHtmlDoc] = useState(() => ini?.html || '');   // ese Word en HTML editable (paso 6)
+  const [editado, setEditado] = useState(() => !!ini?.editado);
   const [firmando, setFirmando] = useState(false);
   const [enviadoA, setEnviadoA] = useState([]);
+  const [recuperado, setRecuperado] = useState(!!ini);
+  const [cambiosDoc, setCambiosDoc] = useState(0);  // solo para volver a guardar al escribir en el paso 6
   const editorRef = useRef(null);
+
+  // Guarda el borrador medio segundo después de dejar de escribir.
+  useEffect(() => {
+    if (done) return;
+    const t = setTimeout(() => {
+      const b = {
+        step, form, compradores, captador, answers, editado,
+        html: step === 6 ? (editorRef.current?.innerHTML || htmlDoc) : '',
+        guardadoEn: new Date().toISOString(),
+      };
+      escribirBorrador(tieneDatos(b) ? b : null);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [step, form, compradores, captador, answers, editado, htmlDoc, cambiosDoc, done]);
+
+  // Paso 6 recuperado: el Word original (botón "⬇ Word") se vuelve a generar con los mismos datos.
+  useEffect(() => {
+    if (step === 6 && !docx) {
+      generateDocx({ ...form, compradores }, { questions: PREGUNTAS, answers }).then(setDocx).catch(() => {});
+    }
+  }, [step, docx]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function empezarDeCero() {
+    if (!window.confirm('¿Borrar lo rellenado y empezar de cero?')) return;
+    escribirBorrador(null);
+    reset();
+  }
 
   function handleFormChange(key, value) {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -180,6 +241,7 @@ export default function App() {
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || `HTTP ${r.status}`);
       setEnviadoA(j.firmantes || compradores.map(c => c.nombre));
+      escribirBorrador(null);
       setDone(true);
     } catch (e) {
       console.error(e);
@@ -201,6 +263,7 @@ export default function App() {
     setHtmlDoc('');
     setEditado(false);
     setEnviadoA([]);
+    setRecuperado(false);
     window.scrollTo(0, 0);
   }
 
@@ -223,6 +286,12 @@ export default function App() {
       <AppHeader step={step} totalSteps={TOTAL_STEPS} />
       <Stepper current={step} />
       <main className={styles.main}>
+        {recuperado && (
+          <div className={styles.recuperado}>
+            <span>💾 Hemos recuperado lo que tenías rellenado en este navegador.</span>
+            <button type="button" onClick={empezarDeCero}>Empezar de cero</button>
+          </div>
+        )}
         {step === 1 && <Step1 form={form} onChange={handleFormChange} captador={captador} onCaptador={setCaptador} errors={errors} />}
         {step === 2 && (
           <Step2
@@ -243,7 +312,7 @@ export default function App() {
           <StepFirmar
             html={htmlDoc}
             editorRef={editorRef}
-            onCambio={() => setEditado(true)}
+            onCambio={() => { setEditado(true); setCambiosDoc(n => n + 1); }}
             onDescargarWord={() => docx && downloadDocx(docx, nombreWord())}
           />
         )}
