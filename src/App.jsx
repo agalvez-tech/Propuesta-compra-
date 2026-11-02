@@ -236,6 +236,8 @@ export default function App() {
           direccion: form.viviendaDir.trim(),
           compradores: compradores.map(c => ({ nombre: c.nombre.trim(), email: (c.email || '').trim(), tel: c.tel })),
           agente: { nombre: form.agenteVisitaNombre, slack_id: form.agenteVisitaSlackId },
+          // Se guarda con el envío para que el contrato de arras lo herede por referencia.
+          datos: { ...form, captador: captador?.name || '', compradores },
         }),
       });
       const j = await r.json().catch(() => ({}));
