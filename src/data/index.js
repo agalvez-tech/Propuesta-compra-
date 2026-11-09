@@ -1,5 +1,4 @@
 export const CAPTADORES = [
-  { name: 'Alejandro García',   channel: 'C0AAJF80U07',  initials: 'AG' },
   { name: 'Almudena Gálvez',    channel: 'DIRECT',        initials: 'AL' },
   { name: 'Amparo Orts',        channel: 'C0AAGQKHU4X',  initials: 'AO' },
   { name: 'Asunción Marco',     channel: 'C0AAZVD8UUA',  initials: 'AS' },
