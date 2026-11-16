@@ -57,6 +57,14 @@ function escribirBorrador(b) {
   }
 }
 
+/* "Modificar oferta" (botón en Slack): ?modificar=<id del envío>&t=<clave> abre el
+   formulario con todo lo de esa propuesta ya relleno, para cambiar lo necesario
+   (contraoferta) y volver a enviarla a firmar al cliente. */
+const PARAMS = new URLSearchParams(window.location.search);
+const MODIFICAR = PARAMS.get('modificar') && PARAMS.get('t')
+  ? { id: PARAMS.get('modificar'), t: PARAMS.get('t') } : null;
+const ESTADO_URL = FIRMA_URL.replace(/\/enviar-firma$/, '/estado');
+
 const tieneDatos = (b) => !!b && (
   JSON.stringify({ ...INITIAL_FORM, ...b.form }) !== JSON.stringify(INITIAL_FORM) ||
   (b.compradores || []).some(c => c.nombre || c.nif || c.tel || c.email) ||
@@ -64,7 +72,10 @@ const tieneDatos = (b) => !!b && (
 );
 
 export default function App() {
-  const [borradorInicial] = useState(() => { const b = leerBorrador(); return tieneDatos(b) ? b : null; });
+  const [borradorInicial] = useState(() => {
+    if (MODIFICAR) return null;   // se carga la propuesta a modificar, no el borrador del navegador
+    const b = leerBorrador(); return tieneDatos(b) ? b : null;
+  });
   const ini = borradorInicial;
   const [step, setStep] = useState(() => (ini?.step === 6 && !ini.html) ? 5 : (ini?.step || 1));
   const [form, setForm] = useState(() => ({ ...INITIAL_FORM, ...(ini?.form || {}) }));
@@ -84,6 +95,33 @@ export default function App() {
   const [recuperado, setRecuperado] = useState(!!ini);
   const [cambiosDoc, setCambiosDoc] = useState(0);  // solo para volver a guardar al escribir en el paso 6
   const editorRef = useRef(null);
+  const [modificando, setModificando] = useState(MODIFICAR ? { ...MODIFICAR, cargando: true } : null);
+
+  // Carga la propuesta a modificar (botón "Modificar oferta" de Slack).
+  useEffect(() => {
+    if (!MODIFICAR) return;
+    fetch(`${ESTADO_URL}/${encodeURIComponent(MODIFICAR.id)}?t=${encodeURIComponent(MODIFICAR.t)}`)
+      .then(r => r.json().then(j => ({ ok: r.ok, j })))
+      .then(({ ok, j }) => {
+        if (!ok || !j.ok) throw new Error(j.error || 'No se ha podido cargar la propuesta');
+        const e = j.estado || {};
+        setForm({ ...INITIAL_FORM, ...(e.form || {}) });
+        setCompradores(e.compradores?.length ? e.compradores.map(c => ({ ...EMPTY_COMPRADOR, ...c })) : [{ ...EMPTY_COMPRADOR }]);
+        setCaptador(e.captador || null);
+        setAnswers(Array.isArray(e.answers) && e.answers.length === PREGUNTAS.length
+          ? e.answers : Array(PREGUNTAS.length).fill(null));
+        setStep(1);
+        setDocx(null);
+        setHtmlDoc('');
+        setEditado(false);
+        setModificando({ ...MODIFICAR, ref: j.ref, firmado: j.firmado });
+      })
+      .catch(err => {
+        setModificando(null);
+        alert('⚠️ ' + err.message + '. Se abre el formulario vacío.');
+      })
+      .finally(() => window.history.replaceState(null, '', window.location.pathname));
+  }, []);
 
   // Guarda el borrador medio segundo después de dejar de escribir.
   useEffect(() => {
@@ -236,12 +274,17 @@ export default function App() {
           direccion: form.viviendaDir.trim(),
           compradores: compradores.map(c => ({ nombre: c.nombre.trim(), email: (c.email || '').trim(), tel: c.tel })),
           agente: { nombre: form.agenteVisitaNombre, slack_id: form.agenteVisitaSlackId },
+          // Para "Modificar oferta" (reabrir relleno) y para que las arras hereden los datos.
+          estado: { form, compradores, captador, answers },
+          datos: { ...form, captador: captador?.name || '', compradores },
+          modifica: modificando?.id || '',
         }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || `HTTP ${r.status}`);
       setEnviadoA(j.firmantes || compradores.map(c => c.nombre));
       escribirBorrador(null);
+      setModificando(null);
       setDone(true);
     } catch (e) {
       console.error(e);
@@ -286,7 +329,16 @@ export default function App() {
       <AppHeader step={step} totalSteps={TOTAL_STEPS} />
       <Stepper current={step} />
       <main className={styles.main}>
-        {recuperado && (
+        {modificando?.cargando && (
+          <div className={styles.recuperado}><span>⏳ Cargando la propuesta para modificarla…</span></div>
+        )}
+        {modificando && !modificando.cargando && (
+          <div className={styles.recuperado}>
+            <span>✏️ Modificando la propuesta {modificando.ref ? `Ref ${modificando.ref}` : ''}: está todo relleno como
+              se envió. Cambia lo que haga falta, genera el documento y vuelve a enviarla a firmar.</span>
+          </div>
+        )}
+        {recuperado && !modificando && (
           <div className={styles.recuperado}>
             <span>💾 Hemos recuperado lo que tenías rellenado en este navegador.</span>
             <button type="button" onClick={empezarDeCero}>Empezar de cero</button>
