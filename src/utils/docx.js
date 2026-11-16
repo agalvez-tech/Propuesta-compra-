@@ -346,7 +346,7 @@ export async function generateDocx(formData, questionData) {
 
   // Firma bloque 1
   body.push(para(
-    [run(`Y en prueba de aceptación y conformidad, se firma el presente documento por duplicado en ${lugarFirma} a ___ de ____ de 2026.`, { size: SZ_BODY, color: GRAY })],
+    [run(`Y en prueba de aceptación y conformidad, se firma el presente documento por duplicado en ${lugarFirma} a ${today}.`, { size: SZ_BODY, color: GRAY })],
     { before: 120, after: 200 }
   ));
 
