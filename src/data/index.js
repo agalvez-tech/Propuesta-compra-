@@ -66,6 +66,7 @@ export const AGENTES = [
   { name: 'Maria Jose Lluch',    slackId: 'U0C5L0Q4E2K' },
   { name: 'Maria Jose Ordoñez',  slackId: 'U0AAFGXHKV2' },
   { name: 'Mavi Castillo',       slackId: 'U0A8MLSNHV0' },
+  { name: 'Mireia Sáez',         slackId: 'U0AGVA645EX' },
   { name: 'Mª Luisa Bellver',    slackId: 'U0A8KL3AYPQ' },
   { name: 'Natalia Sanfélix',    slackId: 'U0A8J79MECV' },
   { name: 'Nuria',               slackId: 'U0B2HH7UXHU' },
